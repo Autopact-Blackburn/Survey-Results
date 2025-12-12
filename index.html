@@ -15,9 +15,6 @@
 <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.js"></script>
 
 <style>
-/* ---------------------------------------------------
-   DARK / LIGHT MODE THEME VARIABLES
---------------------------------------------------- */
 :root {
   --bg: #f5f5f7;
   --text: #1d1d1f;
@@ -40,16 +37,12 @@ body.dark {
   --shadow: rgba(0,0,0,0.4);
 }
 
-/* ---------------------------------------------------
-    GLOBAL STYLES — APPLE / TESLA INSPIRED
---------------------------------------------------- */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
                "SF Pro Text", system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
-  transition: background 0.3s ease, color 0.3s ease;
 }
 
 header {
@@ -59,13 +52,8 @@ header {
   font-weight: 600;
   background: linear-gradient(135deg, #007aff, #0a84ff);
   color: white;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
 }
 
-/* ---------------------------------------------------
-    DARK MODE TOGGLE (TESLA SLIDER STYLE)
---------------------------------------------------- */
 .toggle-container {
   position: absolute;
   top: 20px;
@@ -80,8 +68,6 @@ header {
   border-radius: 30px;
   position: relative;
   cursor: pointer;
-  outline: none;
-  transition: background 0.25s;
 }
 
 #themeToggle:checked {
@@ -92,22 +78,18 @@ header {
   content: "";
   width: 26px;
   height: 26px;
-  background: #ffffff;
+  background: white;
   border-radius: 50%;
   position: absolute;
   top: 2px;
   left: 2px;
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: transform 0.25s;
 }
 
 #themeToggle:checked::before {
   transform: translateX(26px);
 }
 
-/* ---------------------------------------------------
-    TABS
---------------------------------------------------- */
 .tabs {
   display: flex;
   overflow-x: auto;
@@ -120,8 +102,6 @@ header {
   font-weight: 600;
   cursor: pointer;
   color: var(--tab-text);
-  white-space: nowrap;
-  transition: color 0.25s;
   border-bottom: 3px solid transparent;
 }
 
@@ -130,9 +110,6 @@ header {
   color: var(--tab-active);
 }
 
-/* ---------------------------------------------------
-    PAGE WRAPPER
---------------------------------------------------- */
 .page {
   display: none;
   padding: 22px;
@@ -144,35 +121,18 @@ header {
   display: block;
 }
 
-/* ---------------------------------------------------
-    CARDS — TESLA MINIMALISM
---------------------------------------------------- */
 .card {
   background: var(--card);
   padding: 22px;
   border-radius: 18px;
   box-shadow: 0 10px 30px var(--shadow);
   margin-bottom: 22px;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card h3 {
-  margin-top: 0;
-  font-weight: 600;
-  letter-spacing: 0.3px;
 }
 
 .flex {
   display: flex;
   gap: 22px;
   flex-wrap: wrap;
-}
-
-canvas {
-  width: 100% !important;
-  height: auto !important;
-  border-radius: 12px;
-  background: var(--card);
 }
 </style>
 </head>
@@ -194,79 +154,69 @@ canvas {
   <div class="tab" onclick="switchPage(6)">Raw Data</div>
 </div>
 
-<!-- ----------------- PAGE 1 ----------------- -->
+<!-- PAGE 1 -->
 <div class="page active" data-page="1">
   <div class="flex">
     <div class="card" style="flex:1">
       <h3>Experience Satisfaction</h3>
       <canvas id="expChart"></canvas>
     </div>
-
     <div class="card" style="flex:1">
       <h3>Greeting Time</h3>
       <canvas id="greetChart"></canvas>
     </div>
   </div>
-
   <div class="card">
     <h3>AI Insights</h3>
-    <p id="aiInsights">Awaiting more customer responses...</p>
+    <p id="aiInsights">Awaiting responses…</p>
   </div>
 </div>
 
-<!-- ----------------- PAGE 2 ----------------- -->
+<!-- PAGE 2 -->
 <div class="page" data-page="2">
   <div class="card">
     <h3>Customer Word Cloud</h3>
     <canvas id="wordCloud" width="900" height="400"></canvas>
   </div>
-
-  <div class="card">
-    <h3>Sentiment Summary</h3>
-    <p id="sentimentSummary">Loading...</p>
-  </div>
 </div>
 
-<!-- ----------------- PAGE 3 ----------------- -->
+<!-- PAGE 3 -->
 <div class="page" data-page="3">
   <div class="card">
     <h3>Comfort With Consultant</h3>
     <canvas id="comfortChart"></canvas>
   </div>
-
   <div class="card">
     <h3>Follow-Up Experience</h3>
     <canvas id="followChart"></canvas>
   </div>
 </div>
 
-<!-- ----------------- PAGE 4 ----------------- -->
+<!-- PAGE 4 -->
 <div class="page" data-page="4">
   <div class="card">
     <h3>Delivery Time</h3>
     <canvas id="deliveryTimeChart"></canvas>
   </div>
-
   <div class="card">
     <h3>Delivery Length Perception</h3>
     <canvas id="deliveryLengthChart"></canvas>
   </div>
 </div>
 
-<!-- ----------------- PAGE 5 ----------------- -->
+<!-- PAGE 5 -->
 <div class="page" data-page="5">
   <div class="card">
-    <h3>Digital Touchpoint Preferences</h3>
+    <h3>Digital Touchpoints</h3>
     <canvas id="digitalChart"></canvas>
   </div>
-
   <div class="card">
     <h3>Age Breakdown</h3>
     <canvas id="ageChart"></canvas>
   </div>
 </div>
 
-<!-- ----------------- PAGE 6 ----------------- -->
+<!-- PAGE 6 -->
 <div class="page" data-page="6">
   <div class="card">
     <h3>Raw Survey Data</h3>
@@ -275,210 +225,79 @@ canvas {
 </div>
 
 <script>
-/* ---------------------------------------------------
-    THEME TOGGLE
---------------------------------------------------- */
-document.getElementById("themeToggle").addEventListener("change", (e) => {
-  if (e.target.checked) {
-    document.body.classList.add("dark");
-  } else {
-    document.body.classList.remove("dark");
-  }
-});
+document.getElementById("themeToggle").addEventListener("change", e =>
+  document.body.classList.toggle("dark", e.target.checked)
+);
 
-/* ---------------------------------------------------
-    PAGE SWITCHING
---------------------------------------------------- */
 function switchPage(n) {
-  document.querySelectorAll(".tab").forEach((t, i) =>
-    t.classList.toggle("active", i === n - 1)
-  );
-
-  document.querySelectorAll(".page").forEach((p) =>
-    p.classList.remove("active")
-  );
-
+  document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("active", i===n-1));
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.querySelector(`[data-page="${n}"]`).classList.add("active");
 }
 
-/* ---------------------------------------------------
-    SUPABASE CLIENT
---------------------------------------------------- */
-const SUPABASE_URL = "https://jfvqdpephdqzalkcnmdy.supabase.co";
-const SUPABASE_KEY = "sb_publishable_l1p7oa8Lrp8rMPD2xcTyHw_vL_bwk8X";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = window.supabase.createClient(
+  "https://jfvqdpephdqzalkcnmdy.supabase.co",
+  "sb_publishable_l1p7oa8Lrp8rMPD2xcTyHw_vL_bwk8X"
+);
 
-/* ---------------------------------------------------
-    FETCH DATA
---------------------------------------------------- */
+function countValues(arr) {
+  const m = {};
+  arr.forEach(v => { if(v) m[v]=(m[v]||0)+1; });
+  return m;
+}
+
 async function loadSurvey() {
-  const { data, error } = await supabase
-    .from("customer_survey_responses")
-    .select("*");
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-
-  window.surveyData = data;
-
+  const { data } = await supabase.from("customer_survey_responses").select("*");
   renderOverview(data);
   renderSentiment(data);
   renderConsultants(data);
   renderDelivery(data);
   renderDigital(data);
-  renderRaw(data);
+  document.getElementById("rawData").innerText = JSON.stringify(data,null,2);
 }
 
-/* ---------------------------------------------------
-    COUNT OCCURRENCES
---------------------------------------------------- */
-function countValues(arr) {
-  const map = {};
-  arr.forEach(val => {
-    if (!val || val === "undefined") return;
-    map[val] = (map[val] || 0) + 1;
-  });
-  return map;
-}
-
-
-/* ---------------------------------------------------
-    OVERVIEW CHARTS
---------------------------------------------------- */
 function renderOverview(data) {
-  const exp = countValues(data.map((x) => x.exp_rating));
-  const greet = countValues(data.map((x) => x.greet_time));
+  const exp = countValues(data.map(x=>x.exp_rating));
+  const greet = countValues(data.map(x=>x.greet_time));
 
-  new Chart(document.getElementById("expChart"), {
-    type: "pie",
-    data: { labels: Object.keys(exp), datasets: [{ data: Object.values(exp), backgroundColor: ["#0a84ff","#30b0ff","#66c2ff","#99d6ff","#cceaff"] }] },
+  new Chart(expChart,{type:"pie",data:{labels:Object.keys(exp),datasets:[{data:Object.values(exp)}]}});
+
+  new Chart(greetChart,{
+    type:"bar",
+    data:{labels:Object.keys(greet),datasets:[{data:Object.values(greet)}]},
+    options:{scales:{y:{beginAtZero:true}}}
   });
 
-  const greetLabels = {
-  "1_min": "Under 1 min",
-  "1_5": "1–5 mins",
-  "5_10": "5–10 mins",
-  "10_plus": "10+ mins",
-  "never": "Not greeted"
-};
-
-new Chart(document.getElementById("greetChart"), {
-  type: "bar",
-  data: {
-    labels: Object.keys(greetCounts).map(k => greetLabels[k] || k),
-    datasets: [{
-      data: Object.values(greetCounts),
-      backgroundColor: "#005bea"
-    }]
-  }
-});
-
-
-  document.getElementById("aiInsights").innerText =
-    data.length < 5
-      ? "More responses are needed to generate accurate insights."
-      : "AI Summary: Customer satisfaction trends will appear soon.";
+  aiInsights.innerText = data.length<5
+    ? "More responses needed for insights."
+    : "Patterns emerging across experience quality.";
 }
 
-/* ---------------------------------------------------
-    SENTIMENT WORD CLOUD
---------------------------------------------------- */
 function renderSentiment(data) {
-  const comments = [
-    ...data.map((x) => x.smooth || ""),
-    ...data.map((x) => x.frustrating || ""),
-    ...data.map((x) => x.other_dealers || ""),
-    ...data.map((x) => x.delivery_enjoyed || ""),
-    ...data.map((x) => x.delivery_improve || ""),
-    ...data.map((x) => x.change_one || ""),
-  ];
-
-  const words = comments.join(" ").split(/\s+/);
-
-  WordCloud(document.getElementById("wordCloud"), {
-    list: words.map((w) => [w, Math.random() * 10 + 10]),
-  });
-
-  document.getElementById("sentimentSummary").innerText =
-    "Sentiment engine will activate once more comments are collected.";
+  const text = data.flatMap(x=>[x.smooth,x.frustrating,x.other_dealers,x.change_one].filter(Boolean));
+  const words = text.join(" ").split(/\s+/).map(w=>[w,Math.random()*20+10]);
+  WordCloud(wordCloud,{list:words});
 }
 
-/* ---------------------------------------------------
-    CONSULTANTS
---------------------------------------------------- */
 function renderConsultants(data) {
-  const comfort = countValues(data.map((x) => x.comfort));
-  const follow = countValues(data.map((x) => x.follow_up));
-
-  new Chart(document.getElementById("comfortChart"), {
-    type: "bar",
-    data: { labels: Object.keys(comfort), datasets: [{ data: Object.values(comfort), backgroundColor: "#30b0ff" }] },
-  });
-
-  new Chart(document.getElementById("followChart"), {
-    type: "pie",
-    data: { labels: Object.keys(follow), datasets: [{ data: Object.values(follow), backgroundColor: ["#0a84ff","#30b0ff","#66c2ff","#99d6ff"] }] },
-  });
+  new Chart(comfortChart,{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.comfort))),datasets:[{data:Object.values(countValues(data.map(x=>x.comfort)))}]}});
+  new Chart(followChart,{type:"pie",data:{labels:Object.keys(countValues(data.map(x=>x.follow_up))),datasets:[{data:Object.values(countValues(data.map(x=>x.follow_up)))}]}});
 }
 
-/* ---------------------------------------------------
-    DELIVERY
---------------------------------------------------- */
 function renderDelivery(data) {
-  const t = countValues(data.map((x) => x.delivery_time));
-  const l = countValues(data.map((x) => x.delivery_length));
-
-  new Chart(document.getElementById("deliveryTimeChart"), {
-    type: "bar",
-    data: { labels: Object.keys(t), datasets: [{ data: Object.values(t), backgroundColor: "#66c2ff" }] },
-  });
-
-  new Chart(document.getElementById("deliveryLengthChart"), {
-    type: "pie",
-    data: { labels: Object.keys(l), datasets: [{ data: Object.values(l), backgroundColor: ["#30b0ff","#66c2ff","#99d6ff"] }] },
-  });
+  new Chart(deliveryTimeChart,{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.delivery_time))),datasets:[{data:Object.values(countValues(data.map(x=>x.delivery_time)))}]}});
+  new Chart(deliveryLengthChart,{type:"pie",data:{labels:Object.keys(countValues(data.map(x=>x.delivery_length))),datasets:[{data:Object.values(countValues(data.map(x=>x.delivery_length)))}]}});
 }
 
-/* ---------------------------------------------------
-    DIGITAL
---------------------------------------------------- */
 function renderDigital(data) {
-  const qr = countValues(data.map((x) => x.qr_helpful));
-  const age = countValues(data.map((x) => x.age));
-
-  new Chart(document.getElementById("digitalChart"), {
-    type: "bar",
-    data: { labels: Object.keys(qr), datasets: [{ data: Object.values(qr), backgroundColor: "#0a84ff" }] },
-  });
-
-  new Chart(document.getElementById("ageChart"), {
-    type: "bar",
-    data: { labels: Object.keys(age), datasets: [{ data: Object.values(age), backgroundColor: "#30b0ff" }] },
-  });
+  new Chart(digitalChart,{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.qr_helpful))),datasets:[{data:Object.values(countValues(data.map(x=>x.qr_helpful)))}]}});
+  new Chart(ageChart,{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.age))),datasets:[{data:Object.values(countValues(data.map(x=>x.age)))}]}});
 }
 
-/* ---------------------------------------------------
-    RAW DATA
---------------------------------------------------- */
-function renderRaw(data) {
-  document.getElementById("rawData").innerText = JSON.stringify(data, null, 2);
-}
-
-/* ---------------------------------------------------
-    LOAD DATA
---------------------------------------------------- */
 loadSurvey();
 
-/* ---------------------------------------------------
-    REALTIME UPDATES
---------------------------------------------------- */
-supabase
-  .channel("survey_updates")
-  .on("postgres_changes", { event: "*", schema: "public", table: "customer_survey_responses" },
-    () => loadSurvey()
-  )
+supabase.channel("survey_updates")
+  .on("postgres_changes",{event:"*",schema:"public",table:"customer_survey_responses"},loadSurvey)
   .subscribe();
 </script>
 
