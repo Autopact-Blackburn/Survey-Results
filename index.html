@@ -8,7 +8,7 @@
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Charts -->
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Word Cloud -->
@@ -16,124 +16,50 @@
 
 <style>
 :root {
-  --bg: #f5f5f7;
-  --text: #1d1d1f;
-  --card: #ffffff;
-  --tab-bg: #ffffff;
-  --tab-active: #007aff;
-  --tab-text: #4b5563;
-  --border: #e0e0e0;
-  --shadow: rgba(0,0,0,0.08);
+  --bg:#f5f5f7; --text:#1d1d1f; --card:#fff;
+  --tab-bg:#fff; --tab-active:#007aff; --tab-text:#4b5563;
+  --border:#e0e0e0; --shadow:rgba(0,0,0,.08);
 }
-
 body.dark {
-  --bg: #0d0d0f;
-  --text: #e5e5e7;
-  --card: #17181a;
-  --tab-bg: #17181a;
-  --tab-active: #0a84ff;
-  --tab-text: #a1a1a6;
-  --border: #2a2a2b;
-  --shadow: rgba(0,0,0,0.4);
+  --bg:#0d0d0f; --text:#e5e5e7; --card:#17181a;
+  --tab-bg:#17181a; --tab-active:#0a84ff; --tab-text:#a1a1a6;
+  --border:#2a2a2b; --shadow:rgba(0,0,0,.4);
 }
-
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-               "SF Pro Text", system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
+  margin:0; font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",system-ui;
+  background:var(--bg); color:var(--text);
 }
-
 header {
-  padding: 18px;
-  text-align: center;
-  font-size: 24px;
-  font-weight: 600;
-  background: linear-gradient(135deg, #007aff, #0a84ff);
-  color: white;
+  padding:18px; text-align:center; font-size:24px; font-weight:600;
+  background:linear-gradient(135deg,#007aff,#0a84ff); color:#fff;
 }
-
-.toggle-container {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-
-#themeToggle {
-  appearance: none;
-  width: 56px;
-  height: 30px;
-  background: #c7c7cc;
-  border-radius: 30px;
-  position: relative;
-  cursor: pointer;
-}
-
-#themeToggle:checked {
-  background: #0a84ff;
-}
-
+.toggle-container { position:absolute; top:20px; right:20px; }
+#themeToggle { appearance:none; width:56px; height:30px; border-radius:30px; background:#c7c7cc; cursor:pointer; position:relative; }
+#themeToggle:checked { background:#0a84ff; }
 #themeToggle::before {
-  content: "";
-  width: 26px;
-  height: 26px;
-  background: white;
-  border-radius: 50%;
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  transition: transform 0.25s;
+  content:""; width:26px; height:26px; background:#fff; border-radius:50%;
+  position:absolute; top:2px; left:2px; transition:.25s;
 }
-
-#themeToggle:checked::before {
-  transform: translateX(26px);
-}
+#themeToggle:checked::before { transform:translateX(26px); }
 
 .tabs {
-  display: flex;
-  overflow-x: auto;
-  background: var(--tab-bg);
-  border-bottom: 1px solid var(--border);
+  display:flex; overflow-x:auto; background:var(--tab-bg); border-bottom:1px solid var(--border);
 }
-
 .tab {
-  padding: 14px 20px;
-  font-weight: 600;
-  cursor: pointer;
-  color: var(--tab-text);
-  border-bottom: 3px solid transparent;
+  padding:14px 20px; font-weight:600; cursor:pointer;
+  color:var(--tab-text); border-bottom:3px solid transparent;
 }
+.tab.active { color:var(--tab-active); border-bottom-color:var(--tab-active); }
 
-.tab.active {
-  border-bottom: 3px solid var(--tab-active);
-  color: var(--tab-active);
-}
-
-.page {
-  display: none;
-  padding: 22px;
-  max-width: 1100px;
-  margin: auto;
-}
-
-.page.active {
-  display: block;
-}
+.page { display:none; padding:22px; max-width:1100px; margin:auto; }
+.page.active { display:block; }
 
 .card {
-  background: var(--card);
-  padding: 22px;
-  border-radius: 18px;
-  box-shadow: 0 10px 30px var(--shadow);
-  margin-bottom: 22px;
+  background:var(--card); padding:22px; border-radius:18px;
+  box-shadow:0 10px 30px var(--shadow); margin-bottom:22px;
 }
-
-.flex {
-  display: flex;
-  gap: 22px;
-  flex-wrap: wrap;
-}
+.flex { display:flex; gap:22px; flex-wrap:wrap; }
+canvas { max-height:320px; }
 </style>
 </head>
 
@@ -142,7 +68,7 @@ header {
 <header>Blackburn Experience Intelligence Dashboard</header>
 
 <div class="toggle-container">
-  <input type="checkbox" id="themeToggle" />
+  <input type="checkbox" id="themeToggle">
 </div>
 
 <div class="tabs">
@@ -154,7 +80,7 @@ header {
   <div class="tab" onclick="switchPage(6)">Raw Data</div>
 </div>
 
-<!-- PAGE 1 -->
+<!-- OVERVIEW -->
 <div class="page active" data-page="1">
   <div class="flex">
     <div class="card" style="flex:1">
@@ -172,7 +98,7 @@ header {
   </div>
 </div>
 
-<!-- PAGE 2 -->
+<!-- SENTIMENT -->
 <div class="page" data-page="2">
   <div class="card">
     <h3>Customer Word Cloud</h3>
@@ -180,122 +106,119 @@ header {
   </div>
 </div>
 
-<!-- PAGE 3 -->
+<!-- CONSULTANTS -->
 <div class="page" data-page="3">
-  <div class="card">
-    <h3>Comfort With Consultant</h3>
-    <canvas id="comfortChart"></canvas>
-  </div>
-  <div class="card">
-    <h3>Follow-Up Experience</h3>
-    <canvas id="followChart"></canvas>
-  </div>
+  <div class="card"><h3>Comfort With Consultant</h3><canvas id="comfortChart"></canvas></div>
+  <div class="card"><h3>Follow-Up Experience</h3><canvas id="followChart"></canvas></div>
 </div>
 
-<!-- PAGE 4 -->
+<!-- DELIVERY -->
 <div class="page" data-page="4">
-  <div class="card">
-    <h3>Delivery Time</h3>
-    <canvas id="deliveryTimeChart"></canvas>
-  </div>
-  <div class="card">
-    <h3>Delivery Length Perception</h3>
-    <canvas id="deliveryLengthChart"></canvas>
-  </div>
+  <div class="card"><h3>Delivery Time</h3><canvas id="deliveryTimeChart"></canvas></div>
+  <div class="card"><h3>Delivery Length Perception</h3><canvas id="deliveryLengthChart"></canvas></div>
 </div>
 
-<!-- PAGE 5 -->
+<!-- DIGITAL -->
 <div class="page" data-page="5">
-  <div class="card">
-    <h3>Digital Touchpoints</h3>
-    <canvas id="digitalChart"></canvas>
-  </div>
-  <div class="card">
-    <h3>Age Breakdown</h3>
-    <canvas id="ageChart"></canvas>
-  </div>
+  <div class="card"><h3>Digital Touchpoints</h3><canvas id="digitalChart"></canvas></div>
+  <div class="card"><h3>Age Breakdown</h3><canvas id="ageChart"></canvas></div>
 </div>
 
-<!-- PAGE 6 -->
+<!-- RAW -->
 <div class="page" data-page="6">
-  <div class="card">
-    <h3>Raw Survey Data</h3>
-    <pre id="rawData"></pre>
-  </div>
+  <div class="card"><h3>Raw Survey Data</h3><pre id="rawData"></pre></div>
 </div>
 
 <script>
-document.getElementById("themeToggle").addEventListener("change", e =>
-  document.body.classList.toggle("dark", e.target.checked)
-);
+/* THEME */
+themeToggle.onchange = e => document.body.classList.toggle("dark", e.target.checked);
 
+/* NAV */
 function switchPage(n) {
-  document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("active", i===n-1));
+  document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("active",i===n-1));
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.querySelector(`[data-page="${n}"]`).classList.add("active");
 }
 
+/* SUPABASE */
 const supabase = window.supabase.createClient(
   "https://jfvqdpephdqzalkcnmdy.supabase.co",
   "sb_publishable_l1p7oa8Lrp8rMPD2xcTyHw_vL_bwk8X"
 );
 
+/* HELPERS */
+const charts = {};
 function countValues(arr) {
-  const m = {};
-  arr.forEach(v => { if(v) m[v]=(m[v]||0)+1; });
-  return m;
+  const m={}; arr.forEach(v=>{ if(v) m[v]=(m[v]||0)+1; }); return m;
+}
+function draw(id, cfg) {
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart(document.getElementById(id), cfg);
 }
 
+/* LOAD DATA */
 async function loadSurvey() {
-  const { data } = await supabase.from("customer_survey_responses").select("*");
+  const { data, error } = await supabase.from("customer_survey_responses").select("*");
+  if (error) return console.error(error);
+
   renderOverview(data);
   renderSentiment(data);
   renderConsultants(data);
   renderDelivery(data);
   renderDigital(data);
-  document.getElementById("rawData").innerText = JSON.stringify(data,null,2);
+  rawData.textContent = JSON.stringify(data,null,2);
 }
 
+/* OVERVIEW */
 function renderOverview(data) {
-  const exp = countValues(data.map(x=>x.exp_rating));
-  const greet = countValues(data.map(x=>x.greet_time));
-
-  new Chart(expChart,{type:"pie",data:{labels:Object.keys(exp),datasets:[{data:Object.values(exp)}]}});
-
-  new Chart(greetChart,{
-    type:"bar",
-    data:{labels:Object.keys(greet),datasets:[{data:Object.values(greet)}]},
-    options:{scales:{y:{beginAtZero:true}}}
+  draw("expChart", {
+    type:"pie",
+    data:{ labels:Object.keys(countValues(data.map(x=>x.exp_rating))),
+      datasets:[{ data:Object.values(countValues(data.map(x=>x.exp_rating))) }]
+    }
   });
 
-  aiInsights.innerText = data.length<5
-    ? "More responses needed for insights."
-    : "Patterns emerging across experience quality.";
+  draw("greetChart", {
+    type:"bar",
+    data:{ labels:Object.keys(countValues(data.map(x=>x.greet_time))),
+      datasets:[{ data:Object.values(countValues(data.map(x=>x.greet_time))), backgroundColor:"#007aff" }]
+    },
+    options:{ scales:{ y:{ beginAtZero:true }}, plugins:{ legend:{display:false} } }
+  });
+
+  aiInsights.innerText = data.length < 5
+    ? "More responses are needed for accurate insights."
+    : "Live trends emerging across customer experience.";
 }
 
+/* SENTIMENT */
 function renderSentiment(data) {
   const text = data.flatMap(x=>[x.smooth,x.frustrating,x.other_dealers,x.change_one].filter(Boolean));
-  const words = text.join(" ").split(/\s+/).map(w=>[w,Math.random()*20+10]);
-  WordCloud(wordCloud,{list:words});
+  WordCloud(wordCloud,{ list:text.join(" ").split(/\s+/).map(w=>[w,Math.random()*20+10]) });
 }
 
+/* CONSULTANTS */
 function renderConsultants(data) {
-  new Chart(comfortChart,{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.comfort))),datasets:[{data:Object.values(countValues(data.map(x=>x.comfort)))}]}});
-  new Chart(followChart,{type:"pie",data:{labels:Object.keys(countValues(data.map(x=>x.follow_up))),datasets:[{data:Object.values(countValues(data.map(x=>x.follow_up)))}]}});
+  draw("comfortChart",{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.comfort))),datasets:[{data:Object.values(countValues(data.map(x=>x.comfort)))}]}});
+  draw("followChart",{type:"pie",data:{labels:Object.keys(countValues(data.map(x=>x.follow_up))),datasets:[{data:Object.values(countValues(data.map(x=>x.follow_up)))}]}});
 }
 
+/* DELIVERY */
 function renderDelivery(data) {
-  new Chart(deliveryTimeChart,{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.delivery_time))),datasets:[{data:Object.values(countValues(data.map(x=>x.delivery_time)))}]}});
-  new Chart(deliveryLengthChart,{type:"pie",data:{labels:Object.keys(countValues(data.map(x=>x.delivery_length))),datasets:[{data:Object.values(countValues(data.map(x=>x.delivery_length)))}]}});
+  draw("deliveryTimeChart",{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.delivery_time))),datasets:[{data:Object.values(countValues(data.map(x=>x.delivery_time)))}]}});
+  draw("deliveryLengthChart",{type:"pie",data:{labels:Object.keys(countValues(data.map(x=>x.delivery_length))),datasets:[{data:Object.values(countValues(data.map(x=>x.delivery_length)))}]}});
 }
 
+/* DIGITAL */
 function renderDigital(data) {
-  new Chart(digitalChart,{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.qr_helpful))),datasets:[{data:Object.values(countValues(data.map(x=>x.qr_helpful)))}]}});
-  new Chart(ageChart,{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.age))),datasets:[{data:Object.values(countValues(data.map(x=>x.age)))}]}});
+  draw("digitalChart",{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.qr_helpful))),datasets:[{data:Object.values(countValues(data.map(x=>x.qr_helpful)))}]}});
+  draw("ageChart",{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.age))),datasets:[{data:Object.values(countValues(data.map(x=>x.age)))}]}});
 }
 
+/* INIT */
 loadSurvey();
 
+/* REALTIME */
 supabase.channel("survey_updates")
   .on("postgres_changes",{event:"*",schema:"public",table:"customer_survey_responses"},loadSurvey)
   .subscribe();
