@@ -335,13 +335,14 @@ async function loadSurvey() {
     COUNT OCCURRENCES
 --------------------------------------------------- */
 function countValues(arr) {
-  const out = {};
-  arr.forEach((x) => {
-    if (!x) return;
-    out[x] = (out[x] || 0) + 1;
+  const map = {};
+  arr.forEach(val => {
+    if (!val || val === "undefined") return;
+    map[val] = (map[val] || 0) + 1;
   });
-  return out;
+  return map;
 }
+
 
 /* ---------------------------------------------------
     OVERVIEW CHARTS
@@ -355,10 +356,25 @@ function renderOverview(data) {
     data: { labels: Object.keys(exp), datasets: [{ data: Object.values(exp), backgroundColor: ["#0a84ff","#30b0ff","#66c2ff","#99d6ff","#cceaff"] }] },
   });
 
-  new Chart(document.getElementById("greetChart"), {
-    type: "bar",
-    data: { labels: Object.keys(greet), datasets: [{ data: Object.values(greet), backgroundColor: "#0a84ff" }] },
-  });
+  const greetLabels = {
+  "1_min": "Under 1 min",
+  "1_5": "1–5 mins",
+  "5_10": "5–10 mins",
+  "10_plus": "10+ mins",
+  "never": "Not greeted"
+};
+
+new Chart(document.getElementById("greetChart"), {
+  type: "bar",
+  data: {
+    labels: Object.keys(greetCounts).map(k => greetLabels[k] || k),
+    datasets: [{
+      data: Object.values(greetCounts),
+      backgroundColor: "#005bea"
+    }]
+  }
+});
+
 
   document.getElementById("aiInsights").innerText =
     data.length < 5
