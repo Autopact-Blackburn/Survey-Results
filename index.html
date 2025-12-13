@@ -8,7 +8,7 @@
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Chart.js -->
+<!-- Charts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Word Cloud -->
@@ -16,59 +16,217 @@
 
 <style>
 :root {
-  --bg:#f5f5f7; --text:#1d1d1f; --card:#fff;
-  --tab-bg:#fff; --tab-active:#007aff; --tab-text:#4b5563;
-  --border:#e0e0e0; --shadow:rgba(0,0,0,.08);
-}
-body.dark {
-  --bg:#0d0d0f; --text:#e5e5e7; --card:#17181a;
-  --tab-bg:#17181a; --tab-active:#0a84ff; --tab-text:#a1a1a6;
-  --border:#2a2a2b; --shadow:rgba(0,0,0,.4);
-}
-body {
-  margin:0; font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",system-ui;
-  background:var(--bg); color:var(--text);
-}
-header {
-  padding:18px; text-align:center; font-size:24px; font-weight:600;
-  background:linear-gradient(135deg,#007aff,#0a84ff); color:#fff;
-}
-.toggle-container { position:absolute; top:20px; right:20px; }
-#themeToggle { appearance:none; width:56px; height:30px; border-radius:30px; background:#c7c7cc; cursor:pointer; position:relative; }
-#themeToggle:checked { background:#0a84ff; }
-#themeToggle::before {
-  content:""; width:26px; height:26px; background:#fff; border-radius:50%;
-  position:absolute; top:2px; left:2px; transition:.25s;
-}
-#themeToggle:checked::before { transform:translateX(26px); }
+  --bg: #f5f5f7;
+  --text: #1d1d1f;
+  --card: #ffffff;
+  --tab-bg: #ffffff;
+  --tab-active: #007aff;
+  --tab-text: #4b5563;
+  --border: #e0e0e0;
+  --shadow: rgba(0,0,0,0.08);
 
+  --muted: #6b7280;
+  --chip: #eef2ff;
+  --chip-text: #1e40af;
+  --danger: #ef4444;
+  --warn: #f59e0b;
+  --good: #10b981;
+}
+
+body.dark {
+  --bg: #0d0d0f;
+  --text: #e5e5e7;
+  --card: #17181a;
+  --tab-bg: #17181a;
+  --tab-active: #0a84ff;
+  --tab-text: #a1a1a6;
+  --border: #2a2a2b;
+  --shadow: rgba(0,0,0,0.4);
+
+  --muted: #a1a1a6;
+  --chip: #0b1220;
+  --chip-text: #93c5fd;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+               "SF Pro Text", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+header {
+  padding: 18px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 650;
+  background: linear-gradient(135deg, #007aff, #0a84ff);
+  color: white;
+  letter-spacing: 0.4px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+/* Toggle */
+.toggle-container { position: absolute; top: 20px; right: 20px; }
+#themeToggle {
+  appearance: none;
+  width: 56px; height: 30px;
+  background: #c7c7cc;
+  border-radius: 30px;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.2s ease;
+}
+#themeToggle:checked { background: #0a84ff; }
+#themeToggle::before {
+  content: "";
+  width: 26px; height: 26px;
+  background: #ffffff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px; left: 2px;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+#themeToggle:checked::before { transform: translateX(26px); }
+
+/* Tabs */
 .tabs {
-  display:flex; overflow-x:auto; background:var(--tab-bg); border-bottom:1px solid var(--border);
+  display: flex;
+  overflow-x: auto;
+  background: var(--tab-bg);
+  border-bottom: 1px solid var(--border);
 }
 .tab {
-  padding:14px 20px; font-weight:600; cursor:pointer;
-  color:var(--tab-text); border-bottom:3px solid transparent;
+  padding: 14px 20px;
+  font-weight: 650;
+  cursor: pointer;
+  color: var(--tab-text);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  border-bottom: 3px solid transparent;
 }
-.tab.active { color:var(--tab-active); border-bottom-color:var(--tab-active); }
+.tab.active { border-bottom: 3px solid var(--tab-active); color: var(--tab-active); }
 
-.page { display:none; padding:22px; max-width:1100px; margin:auto; }
-.page.active { display:block; }
+/* Pages & Cards */
+.page { display: none; padding: 22px; max-width: 1100px; margin: auto; }
+.page.active { display: block; }
 
 .card {
-  background:var(--card); padding:22px; border-radius:18px;
-  box-shadow:0 10px 30px var(--shadow); margin-bottom:22px;
+  background: var(--card);
+  padding: 22px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px var(--shadow);
+  margin-bottom: 22px;
+  border: 1px solid color-mix(in srgb, var(--border), transparent 30%);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
 }
-.flex { display:flex; gap:22px; flex-wrap:wrap; }
-canvas { max-height:320px; }
+.card h3 { margin: 0 0 10px; font-weight: 650; letter-spacing: 0.25px; }
+.card p { margin: 8px 0 0; color: var(--muted); line-height: 1.45; }
+
+.flex { display: flex; gap: 22px; flex-wrap: wrap; }
+canvas { width: 100% !important; height: auto !important; border-radius: 12px; }
+
+/* KPI tiles */
+.kpis { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 8px; }
+.kpi {
+  flex: 1 1 180px;
+  background: color-mix(in srgb, var(--card), #ffffff 0%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 14px 12px;
+}
+.kpi .label { font-size: 12px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.kpi .value { font-size: 22px; font-weight: 750; margin-top: 6px; }
+.kpi .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+/* Insight list */
+.insight-stack { display: grid; gap: 10px; }
+.insight {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 12px 10px;
+  display: grid;
+  gap: 6px;
+}
+.insight .headline { font-weight: 700; }
+.insight .meta { font-size: 12px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--chip-text);
+  font-size: 12px;
+  font-weight: 650;
+  width: fit-content;
+}
+.badge { font-weight: 750; }
+.badge.good { color: var(--good); }
+.badge.warn { color: var(--warn); }
+.badge.bad { color: var(--danger); }
+
+/* Raw table */
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th, td {
+  border-bottom: 1px solid var(--border);
+  padding: 10px 10px;
+  text-align: left;
+  vertical-align: top;
+  color: color-mix(in srgb, var(--text), #000 0%);
+}
+th {
+  position: sticky;
+  top: 0;
+  background: var(--card);
+  z-index: 2;
+  font-weight: 750;
+}
+.raw-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 10px;
+}
+input[type="search"], select {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  outline: none;
+}
+.btn {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 650;
+}
+.btn:active { transform: translateY(1px); }
+
+.small { font-size: 12px; color: var(--muted); }
 </style>
 </head>
 
 <body>
-
 <header>Blackburn Experience Intelligence Dashboard</header>
 
 <div class="toggle-container">
-  <input type="checkbox" id="themeToggle">
+  <input type="checkbox" id="themeToggle" />
 </div>
 
 <div class="tabs">
@@ -80,147 +238,940 @@ canvas { max-height:320px; }
   <div class="tab" onclick="switchPage(6)">Raw Data</div>
 </div>
 
-<!-- OVERVIEW -->
+<!-- ----------------- PAGE 1 ----------------- -->
 <div class="page active" data-page="1">
+
+  <div class="card">
+    <div class="kpis">
+      <div class="kpi">
+        <div class="label">Responses</div>
+        <div class="value" id="kpiN">0</div>
+        <div class="hint">Live from Supabase</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Excellent / Good</div>
+        <div class="value" id="kpiTop">—</div>
+        <div class="hint">Overall sales experience</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Greeted ≤ 5 mins</div>
+        <div class="value" id="kpiGreet">—</div>
+        <div class="hint">First impression speed</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Digital start OK</div>
+        <div class="value" id="kpiQR">—</div>
+        <div class="hint">QR / App helpful (Yes+Maybe)</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Prefer ≤ 60 mins</div>
+        <div class="value" id="kpiTime">—</div>
+        <div class="hint">Ideal in-store purchase time</div>
+      </div>
+    </div>
+    <div class="small" id="kpiNote">Waiting for data…</div>
+  </div>
+
   <div class="flex">
     <div class="card" style="flex:1">
       <h3>Experience Satisfaction</h3>
       <canvas id="expChart"></canvas>
     </div>
+
     <div class="card" style="flex:1">
       <h3>Greeting Time</h3>
       <canvas id="greetChart"></canvas>
     </div>
   </div>
+
   <div class="card">
     <h3>AI Insights</h3>
-    <p id="aiInsights">Awaiting responses…</p>
+    <div class="small" id="confidenceLine">—</div>
+    <div id="aiInsights" class="insight-stack" style="margin-top:10px;">
+      <div class="insight">
+        <div class="headline">Collecting early signals…</div>
+        <div class="meta">
+          <span class="chip">Confidence: Low</span>
+          <span>Once responses grow, this becomes a live headline stack.</span>
+        </div>
+      </div>
+    </div>
   </div>
+
 </div>
 
-<!-- SENTIMENT -->
+<!-- ----------------- PAGE 2 ----------------- -->
 <div class="page" data-page="2">
   <div class="card">
     <h3>Customer Word Cloud</h3>
     <canvas id="wordCloud" width="900" height="400"></canvas>
+    <p class="small">Word cloud shows dominant language. Themes below give the “so what”.</p>
+  </div>
+
+  <div class="card">
+    <h3>Theme & Sentiment Summary</h3>
+    <div id="sentimentSummary" class="insight-stack"></div>
   </div>
 </div>
 
-<!-- CONSULTANTS -->
+<!-- ----------------- PAGE 3 ----------------- -->
 <div class="page" data-page="3">
-  <div class="card"><h3>Comfort With Consultant</h3><canvas id="comfortChart"></canvas></div>
-  <div class="card"><h3>Follow-Up Experience</h3><canvas id="followChart"></canvas></div>
+  <div class="card">
+    <h3>Comfort With Consultant</h3>
+    <canvas id="comfortChart"></canvas>
+  </div>
+
+  <div class="card">
+    <h3>Follow-Up Experience</h3>
+    <canvas id="followChart"></canvas>
+  </div>
+
+  <div class="card">
+    <h3>Consultant Signals</h3>
+    <div id="consultantInsights" class="insight-stack"></div>
+  </div>
 </div>
 
-<!-- DELIVERY -->
+<!-- ----------------- PAGE 4 ----------------- -->
 <div class="page" data-page="4">
-  <div class="card"><h3>Delivery Time</h3><canvas id="deliveryTimeChart"></canvas></div>
-  <div class="card"><h3>Delivery Length Perception</h3><canvas id="deliveryLengthChart"></canvas></div>
+  <div class="card">
+    <h3>Delivery Time</h3>
+    <canvas id="deliveryTimeChart"></canvas>
+  </div>
+
+  <div class="card">
+    <h3>Delivery Length Perception</h3>
+    <canvas id="deliveryLengthChart"></canvas>
+  </div>
+
+  <div class="card">
+    <h3>Delivery Signals</h3>
+    <div id="deliveryInsights" class="insight-stack"></div>
+  </div>
 </div>
 
-<!-- DIGITAL -->
+<!-- ----------------- PAGE 5 ----------------- -->
 <div class="page" data-page="5">
-  <div class="card"><h3>Digital Touchpoints</h3><canvas id="digitalChart"></canvas></div>
-  <div class="card"><h3>Age Breakdown</h3><canvas id="ageChart"></canvas></div>
+  <div class="card">
+    <h3>Digital Touchpoint Preferences</h3>
+    <canvas id="digitalChart"></canvas>
+  </div>
+
+  <div class="card">
+    <h3>Age Breakdown</h3>
+    <canvas id="ageChart"></canvas>
+  </div>
+
+  <div class="card">
+    <h3>Digital Signals</h3>
+    <div id="digitalInsights" class="insight-stack"></div>
+  </div>
 </div>
 
-<!-- RAW -->
+<!-- ----------------- PAGE 6 ----------------- -->
 <div class="page" data-page="6">
-  <div class="card"><h3>Raw Survey Data</h3><pre id="rawData"></pre></div>
+  <div class="card">
+    <h3>Raw Survey Data</h3>
+
+    <div class="raw-controls">
+      <input id="rawSearch" type="search" placeholder="Search anything…" />
+      <select id="rawLimit">
+        <option value="25">Show 25</option>
+        <option value="50" selected>Show 50</option>
+        <option value="100">Show 100</option>
+        <option value="500">Show 500</option>
+      </select>
+      <button class="btn" onclick="copyRawJson()">Copy JSON</button>
+      <button class="btn" onclick="downloadCSV()">Export CSV</button>
+      <span class="small" id="rawMeta"></span>
+    </div>
+
+    <div class="table-wrap">
+      <table id="rawTable">
+        <thead id="rawThead"></thead>
+        <tbody id="rawTbody"></tbody>
+      </table>
+    </div>
+
+  </div>
 </div>
 
 <script>
-/* THEME */
-themeToggle.onchange = e => document.body.classList.toggle("dark", e.target.checked);
+/* ---------------------------
+   THEME
+--------------------------- */
+document.getElementById("themeToggle").addEventListener("change", (e) => {
+  document.body.classList.toggle("dark", e.target.checked);
+});
 
-/* NAV */
+/* ---------------------------
+   TAB SWITCH
+--------------------------- */
 function switchPage(n) {
-  document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("active",i===n-1));
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach((t, i) =>
+    t.classList.toggle("active", i === n - 1)
+  );
+  document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
   document.querySelector(`[data-page="${n}"]`).classList.add("active");
 }
 
-/* SUPABASE */
-const supabase = window.supabase.createClient(
-  "https://jfvqdpephdqzalkcnmdy.supabase.co",
-  "sb_publishable_l1p7oa8Lrp8rMPD2xcTyHw_vL_bwk8X"
-);
+/* ---------------------------
+   SUPABASE
+--------------------------- */
+const SUPABASE_URL = "https://jfvqdpephdqzalkcnmdy.supabase.co";
+const SUPABASE_KEY = "sb_publishable_l1p7oa8Lrp8rMPD2xcTyHw_vL_bwk8X";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* HELPERS */
-const charts = {};
+/* ---------------------------
+   CHART INSTANCES (avoid stacking)
+--------------------------- */
+const chartRefs = {};
+function destroyChart(id){
+  if (chartRefs[id]) { chartRefs[id].destroy(); delete chartRefs[id]; }
+}
+
+/* ---------------------------
+   UTILITIES
+--------------------------- */
+function pct(part, total){
+  if (!total) return 0;
+  return Math.round((part / total) * 100);
+}
+function safe(v){ return (v === null || v === undefined) ? "" : String(v); }
+
 function countValues(arr) {
-  const m={}; arr.forEach(v=>{ if(v) m[v]=(m[v]||0)+1; }); return m;
+  const map = {};
+  arr.forEach(val => {
+    if (!val || val === "undefined") return;
+    map[val] = (map[val] || 0) + 1;
+  });
+  return map;
 }
-function draw(id, cfg) {
-  if (charts[id]) charts[id].destroy();
-  charts[id] = new Chart(document.getElementById(id), cfg);
+function sumCounts(obj){ return Object.values(obj).reduce((a,b)=>a+b,0); }
+
+function labelMap(field, value){
+  const maps = {
+    exp_rating: { excellent:"Excellent", good:"Good", average:"Average", below_avg:"Below average", poor:"Poor" },
+    greet_time: { "1_min":"Under 1 min", "1_5":"1–5 mins", "5_10":"5–10 mins", "10_plus":"10+ mins", "never":"Not greeted" },
+    comfort: { very:"Very comfortable", somewhat:"Somewhat comfortable", neutral:"Neutral", dislike:"Disliked", na:"N/A" },
+    follow_up: { yes:"Yes", sometimes:"Sometimes", rarely:"Rarely", never:"Never" },
+    qr_helpful: { yes:"Yes", maybe:"Maybe", no:"No" },
+    prefer_browse: { yes:"Yes", maybe:"Maybe", no:"No" },
+    online_booking: { yes:"Yes", maybe:"Maybe", no:"No" },
+    digital_details: { yes:"Yes", maybe:"Maybe", no:"No" },
+    delivery_time: { "0_10":"0–10 mins", "10_30":"10–30 mins", "30_60":"30–60 mins", "60_plus":"60+ mins", "none":"No guided delivery" },
+    delivery_length: { right:"About right", short:"Too short", long:"Too long", unsure:"Unsure" },
+    future_digital: { yes:"Yes", maybe:"Maybe", no:"No" },
+    ideal_purchase_time: {
+      under_30:"Under 30 mins",
+      "30_60":"30–60 mins",
+      "1_2":"1–2 hrs",
+      as_long_as_needed:"As long as it takes (if good)",
+      fully_online:"Prefer mostly/fully online"
+    },
+    age: { under_21:"Under 21", "21_30":"21–30", "31_40":"31–40", "41_50":"41–50", "51_60":"51–60", "61_70":"61–70", "70_plus":"Over 70" }
+  };
+  return (maps[field] && maps[field][value]) ? maps[field][value] : value;
 }
 
-/* LOAD DATA */
-async function loadSurvey() {
-  const { data, error } = await supabase.from("customer_survey_responses").select("*");
-  if (error) return console.error(error);
-
-  renderOverview(data);
-  renderSentiment(data);
-  renderConsultants(data);
-  renderDelivery(data);
-  renderDigital(data);
-  rawData.textContent = JSON.stringify(data,null,2);
+function confidenceTag(n){
+  if (n < 10) return {label:"Low", cls:"warn", note:"Early signals only"};
+  if (n < 30) return {label:"Medium", cls:"warn", note:"Patterns emerging"};
+  if (n < 100) return {label:"High", cls:"good", note:"Strong directional confidence"};
+  return {label:"Very High", cls:"good", note:"Stable patterns"};
 }
 
-/* OVERVIEW */
-function renderOverview(data) {
-  draw("expChart", {
+function toNumberRating(exp){
+  // higher = better
+  const map = { excellent:5, good:4, average:3, below_avg:2, poor:1 };
+  return map[exp] || null;
+}
+
+function greetToMinutesBucket(g){
+  // approximate minutes for correlation
+  const map = { "1_min":1, "1_5":3, "5_10":8, "10_plus":12, "never":15 };
+  return map[g] || null;
+}
+
+/* ---------------------------
+   LOCAL “AI” TEXT ANALYSIS
+--------------------------- */
+const POS_WORDS = new Set([
+  "great","excellent","good","easy","smooth","helpful","friendly","happy","positive","clear","fast","quick","simple","love","enjoyed","amazing"
+]);
+const NEG_WORDS = new Set([
+  "slow","confusing","frustrating","bad","poor","wait","waiting","rude","ignored","annoying","stress","boring","hate","awful","long","delay","repeating","repeat"
+]);
+
+const STOP_WORDS = new Set([
+  "the","and","a","an","to","of","in","on","for","with","was","were","is","it","that","this","i","we","they","you","our","from","at","as","be","are",
+  "very","really","just","but","so","not","im","it's","its","my","your","their","had","have","has","did","do","does","would","could","should"
+]);
+
+function tokenize(text){
+  return safe(text)
+    .toLowerCase()
+    .replace(/[^a-z0-9\s']/g, " ")
+    .split(/\s+/)
+    .filter(w => w && w.length > 2 && !STOP_WORDS.has(w));
+}
+
+function sentimentScore(text){
+  const tokens = tokenize(text);
+  let score = 0;
+  for (const t of tokens){
+    if (POS_WORDS.has(t)) score += 1;
+    if (NEG_WORDS.has(t)) score -= 1;
+  }
+  return score; // can be negative/positive
+}
+
+function topNFromMap(map, n=8){
+  return Object.entries(map)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,n);
+}
+
+function buildInsightCard(headline, metaParts=[], confidence=null){
+  const conf = confidence ? `<span class="chip">Confidence: ${confidence.label}</span>` : "";
+  const meta = metaParts.length ? metaParts.join(" · ") : "";
+  return `
+    <div class="insight">
+      <div class="headline">${headline}</div>
+      <div class="meta">${conf}${meta ? `<span>${meta}</span>` : ""}</div>
+    </div>
+  `;
+}
+
+/* ---------------------------
+   DASHBOARD RENDERERS
+--------------------------- */
+function renderKPIs(data){
+  const n = data.length;
+  document.getElementById("kpiN").innerText = n;
+
+  const expCounts = countValues(data.map(x=>x.exp_rating));
+  const top = (expCounts.excellent || 0) + (expCounts.good || 0);
+  document.getElementById("kpiTop").innerText = n ? `${pct(top,n)}%` : "—";
+
+  const greetCounts = countValues(data.map(x=>x.greet_time));
+  const greetedFast = (greetCounts["1_min"]||0) + (greetCounts["1_5"]||0);
+  document.getElementById("kpiGreet").innerText = n ? `${pct(greetedFast,n)}%` : "—";
+
+  const qrCounts = countValues(data.map(x=>x.qr_helpful));
+  const qrOk = (qrCounts.yes||0) + (qrCounts.maybe||0);
+  document.getElementById("kpiQR").innerText = n ? `${pct(qrOk,n)}%` : "—";
+
+  const idealCounts = countValues(data.map(x=>x.ideal_purchase_time));
+  const under60 = (idealCounts.under_30||0) + (idealCounts["30_60"]||0);
+  document.getElementById("kpiTime").innerText = n ? `${pct(under60,n)}%` : "—";
+
+  document.getElementById("kpiNote").innerText =
+    n ? `Last refresh: ${new Date().toLocaleString()}` : "Waiting for data…";
+}
+
+function renderOverviewCharts(data) {
+  const expCounts = countValues(data.map((x) => x.exp_rating));
+  const greetCounts = countValues(data.map((x) => x.greet_time));
+
+  // Experience pie
+  destroyChart("expChart");
+  chartRefs.expChart = new Chart(document.getElementById("expChart"), {
+    type: "pie",
+    data: {
+      labels: Object.keys(expCounts).map(k => labelMap("exp_rating", k)),
+      datasets: [{
+        data: Object.values(expCounts)
+      }]
+    },
+    options: { plugins:{ legend:{ position:"bottom" } } }
+  });
+
+  // Greeting bar
+  destroyChart("greetChart");
+  const greetKeys = Object.keys(greetCounts);
+  chartRefs.greetChart = new Chart(document.getElementById("greetChart"), {
+    type: "bar",
+    data: {
+      labels: greetKeys.map(k => labelMap("greet_time", k)),
+      datasets: [{
+        data: greetKeys.map(k => greetCounts[k])
+      }]
+    },
+    options: {
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } }
+    }
+  });
+}
+
+function renderConsultantCharts(data){
+  const comfort = countValues(data.map(x=>x.comfort));
+  const follow = countValues(data.map(x=>x.follow_up));
+
+  destroyChart("comfortChart");
+  chartRefs.comfortChart = new Chart(document.getElementById("comfortChart"),{
+    type:"bar",
+    data:{
+      labels:Object.keys(comfort).map(k=>labelMap("comfort", k)),
+      datasets:[{ data:Object.keys(comfort).map(k=>comfort[k]) }]
+    },
+    options:{ plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, ticks:{precision:0}}} }
+  });
+
+  destroyChart("followChart");
+  chartRefs.followChart = new Chart(document.getElementById("followChart"),{
     type:"pie",
-    data:{ labels:Object.keys(countValues(data.map(x=>x.exp_rating))),
-      datasets:[{ data:Object.values(countValues(data.map(x=>x.exp_rating))) }]
+    data:{
+      labels:Object.keys(follow).map(k=>labelMap("follow_up", k)),
+      datasets:[{ data:Object.keys(follow).map(k=>follow[k]) }]
+    },
+    options:{ plugins:{legend:{position:"bottom"}} }
+  });
+}
+
+function renderDeliveryCharts(data){
+  const t = countValues(data.map(x=>x.delivery_time));
+  const l = countValues(data.map(x=>x.delivery_length));
+
+  destroyChart("deliveryTimeChart");
+  chartRefs.deliveryTimeChart = new Chart(document.getElementById("deliveryTimeChart"),{
+    type:"bar",
+    data:{
+      labels:Object.keys(t).map(k=>labelMap("delivery_time", k)),
+      datasets:[{ data:Object.keys(t).map(k=>t[k]) }]
+    },
+    options:{ plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, ticks:{precision:0}}} }
+  });
+
+  destroyChart("deliveryLengthChart");
+  chartRefs.deliveryLengthChart = new Chart(document.getElementById("deliveryLengthChart"),{
+    type:"pie",
+    data:{
+      labels:Object.keys(l).map(k=>labelMap("delivery_length", k)),
+      datasets:[{ data:Object.keys(l).map(k=>l[k]) }]
+    },
+    options:{ plugins:{legend:{position:"bottom"}} }
+  });
+}
+
+function renderDigitalCharts(data){
+  const qr = countValues(data.map(x=>x.qr_helpful));
+  const age = countValues(data.map(x=>x.age));
+
+  destroyChart("digitalChart");
+  chartRefs.digitalChart = new Chart(document.getElementById("digitalChart"),{
+    type:"bar",
+    data:{
+      labels:Object.keys(qr).map(k=>labelMap("qr_helpful", k)),
+      datasets:[{ data:Object.keys(qr).map(k=>qr[k]) }]
+    },
+    options:{ plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, ticks:{precision:0}}} }
+  });
+
+  destroyChart("ageChart");
+  chartRefs.ageChart = new Chart(document.getElementById("ageChart"),{
+    type:"bar",
+    data:{
+      labels:Object.keys(age).map(k=>labelMap("age", k)),
+      datasets:[{ data:Object.keys(age).map(k=>age[k]) }]
+    },
+    options:{ plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, ticks:{precision:0}}} }
+  });
+}
+
+/* ---------------------------
+   LOCAL AI: HEADLINE ENGINE
+--------------------------- */
+function buildHeadlineInsights(data){
+  const n = data.length;
+  const conf = confidenceTag(n);
+  document.getElementById("confidenceLine").innerHTML =
+    `<span class="chip">Sample size: ${n}</span> <span class="chip">Confidence: <span class="badge ${conf.cls}">${conf.label}</span></span> <span class="small">(${conf.note})</span>`;
+
+  if (!n){
+    return [buildInsightCard("No responses yet.", ["Once the first responses arrive, insights will appear automatically."], conf)];
+  }
+
+  const exp = countValues(data.map(x=>x.exp_rating));
+  const greet = countValues(data.map(x=>x.greet_time));
+  const follow = countValues(data.map(x=>x.follow_up));
+  const qr = countValues(data.map(x=>x.qr_helpful));
+  const ideal = countValues(data.map(x=>x.ideal_purchase_time));
+  const browse = countValues(data.map(x=>x.prefer_browse));
+  const booking = countValues(data.map(x=>x.online_booking));
+  const digitalDetails = countValues(data.map(x=>x.digital_details));
+  const deliveryLen = countValues(data.map(x=>x.delivery_length));
+  const deliveryTime = countValues(data.map(x=>x.delivery_time));
+  const futureDig = countValues(data.map(x=>x.future_digital));
+
+  const excellentGood = (exp.excellent||0) + (exp.good||0);
+  const notGreat = (exp.below_avg||0) + (exp.poor||0);
+
+  const greetedUnder5 = (greet["1_min"]||0) + (greet["1_5"]||0);
+  const greetedSlow = (greet["5_10"]||0) + (greet["10_plus"]||0) + (greet.never||0);
+
+  const qrOk = (qr.yes||0) + (qr.maybe||0);
+  const under60 = (ideal.under_30||0) + (ideal["30_60"]||0);
+  const onlinePref = (ideal.fully_online||0);
+
+  const followBad = (follow.rarely||0) + (follow.never||0);
+
+  // Correlation-ish signals (lightweight)
+  let corrGreet = null;
+  let corrExp = null;
+  {
+    // compute average exp rating for fast greet vs slow greet
+    const fast = data.filter(r => r.greet_time === "1_min" || r.greet_time === "1_5");
+    const slow = data.filter(r => r.greet_time === "5_10" || r.greet_time === "10_plus" || r.greet_time === "never");
+    function avgExp(rows){
+      const vals = rows.map(r=>toNumberRating(r.exp_rating)).filter(v=>v!==null);
+      if (!vals.length) return null;
+      return vals.reduce((a,b)=>a+b,0)/vals.length;
+    }
+    const aFast = avgExp(fast);
+    const aSlow = avgExp(slow);
+    if (aFast !== null && aSlow !== null){
+      corrGreet = aFast - aSlow; // positive means fast greet yields better exp
+    }
+  }
+  {
+    // delivery time vs "too long"
+    const longDeliveries = data.filter(r => r.delivery_length === "long").length;
+    const timeOver30 = data.filter(r => r.delivery_time === "30_60" || r.delivery_time === "60_plus").length;
+    corrExp = { longDeliveries, timeOver30 };
+  }
+
+  const insights = [];
+
+  // Headline 1: overall satisfaction
+  insights.push(buildInsightCard(
+    `${pct(excellentGood,n)}% rate their overall sales experience as Excellent/Good.`,
+    [`(${excellentGood}/${n})`, notGreat ? `${pct(notGreat,n)}% rate it Below avg/Poor.` : ""].filter(Boolean),
+    conf
+  ));
+
+  // Greeting speed
+  insights.push(buildInsightCard(
+    `${pct(greetedUnder5,n)}% were greeted within 5 minutes.`,
+    [`(${greetedUnder5}/${n})`, greetedSlow ? `${pct(greetedSlow,n)}% waited >5 mins / not greeted.` : ""].filter(Boolean),
+    conf
+  ));
+
+  if (corrGreet !== null){
+    const dir = corrGreet > 0.25 ? "higher" : "similar";
+    insights.push(buildInsightCard(
+      `Faster greetings correlate with ${dir} satisfaction.`,
+      [`Avg experience gap (fast vs slow): ${corrGreet.toFixed(2)} / 5`],
+      conf
+    ));
+  }
+
+  // Ideal time in store
+  if (sumCounts(ideal) > 0){
+    insights.push(buildInsightCard(
+      `${pct(under60,n)}% prefer an in-store purchase process of 60 minutes or less.`,
+      [`(${under60}/${n})`, onlinePref ? `${pct(onlinePref,n)}% prefer mostly/fully online.` : ""].filter(Boolean),
+      conf
+    ));
+  }
+
+  // QR helpful / digital start
+  insights.push(buildInsightCard(
+    `${pct(qrOk,n)}% say a QR/App-led start would be helpful (Yes+Maybe).`,
+    [`(${qrOk}/${n})`],
+    conf
+  ));
+
+  // Follow-up
+  if (sumCounts(follow) > 0){
+    insights.push(buildInsightCard(
+      `${pct(followBad,n)}% report follow-up was Rarely/Never appropriate.`,
+      [`(${followBad}/${n})`],
+      conf
+    ));
+  }
+
+  // Browse preference
+  if (sumCounts(browse) > 0){
+    const browseYesMaybe = (browse.yes||0) + (browse.maybe||0);
+    insights.push(buildInsightCard(
+      `${pct(browseYesMaybe,n)}% prefer to browse before speaking with a consultant (Yes+Maybe).`,
+      [`(${browseYesMaybe}/${n})`],
+      conf
+    ));
+  }
+
+  // Online booking
+  if (sumCounts(booking) > 0){
+    const bookingYesMaybe = (booking.yes||0) + (booking.maybe||0);
+    insights.push(buildInsightCard(
+      `${pct(bookingYesMaybe,n)}% would value instant self-booking for test drives (Yes+Maybe).`,
+      [`(${bookingYesMaybe}/${n})`],
+      conf
+    ));
+  }
+
+  // Digital details entry
+  if (sumCounts(digitalDetails) > 0){
+    const ddYesMaybe = (digitalDetails.yes||0) + (digitalDetails.maybe||0);
+    insights.push(buildInsightCard(
+      `${pct(ddYesMaybe,n)}% would prefer entering their details digitally (Yes+Maybe).`,
+      [`(${ddYesMaybe}/${n})`],
+      conf
+    ));
+  }
+
+  // Delivery perception
+  if (sumCounts(deliveryLen) > 0){
+    const tooLong = (deliveryLen.long||0);
+    const tooShort = (deliveryLen.short||0);
+    insights.push(buildInsightCard(
+      `Delivery length feedback: ${pct(tooLong,n)}% too long, ${pct(tooShort,n)}% too short.`,
+      [`About right: ${pct((deliveryLen.right||0),n)}%`],
+      conf
+    ));
+  }
+
+  // Future digital
+  if (sumCounts(futureDig) > 0){
+    const digYesMaybe = (futureDig.yes||0) + (futureDig.maybe||0);
+    insights.push(buildInsightCard(
+      `${pct(digYesMaybe,n)}% would consider a more digital dealership experience (Yes+Maybe).`,
+      [`(${digYesMaybe}/${n})`],
+      conf
+    ));
+  }
+
+  // Simple “action hint” based on thresholds (local AI guidance)
+  if (n >= 10){
+    if (pct(greetedSlow,n) >= 25){
+      insights.push(buildInsightCard(
+        `Operational focus: greeting speed is a friction driver — consider a “host” role on peak days.`,
+        [`Trigger: ${pct(greetedSlow,n)}% waited >5 mins / not greeted`],
+        conf
+      ));
+    }
+    if (pct(qrOk,n) >= 65 && pct(under60,n) >= 55){
+      insights.push(buildInsightCard(
+        `The data supports a hybrid model: digital-first start + human-led test drives/appraisals.`,
+        [`High digital acceptance + low in-store time preference`],
+        conf
+      ));
+    }
+  }
+
+  return insights;
+}
+
+/* ---------------------------
+   SENTIMENT & THEMES
+--------------------------- */
+function renderSentiment(data){
+  // Wordcloud data
+  const commentFields = ["smooth","frustrating","other_dealers","delivery_enjoyed","delivery_improve","change_one"];
+  const allText = data.flatMap(r => commentFields.map(f=>safe(r[f])).filter(Boolean));
+  const tokens = allText.flatMap(t => tokenize(t));
+
+  // frequency map for themes
+  const freq = {};
+  tokens.forEach(w => freq[w] = (freq[w]||0) + 1);
+
+  // basic sentiment scoring
+  let totalScore = 0;
+  let scoredCount = 0;
+  const themeBuckets = {
+    waiting: 0, followup: 0, delivery: 0, repetition: 0, friendliness: 0, clarity: 0
+  };
+  const waitingWords = new Set(["wait","waiting","delay","slow","queue","queues","hours","hour"]);
+  const followWords = new Set(["follow","followup","follow-up","called","call","contact","emailed","email","text","sms"]);
+  const deliveryWords = new Set(["delivery","handover","handoff","pickup","pick-up"]);
+  const repeatWords = new Set(["repeat","repeating","repetition","again"]);
+  const friendlyWords = new Set(["friendly","happy","helpful","nice","positive"]);
+  const clarityWords = new Set(["clear","clarity","confusing","explain","explained","information"]);
+
+  allText.forEach(t=>{
+    const s = sentimentScore(t);
+    if (t.trim().length){
+      totalScore += s;
+      scoredCount += 1;
+      const toks = tokenize(t);
+      toks.forEach(w=>{
+        if (waitingWords.has(w)) themeBuckets.waiting++;
+        if (followWords.has(w)) themeBuckets.followup++;
+        if (deliveryWords.has(w)) themeBuckets.delivery++;
+        if (repeatWords.has(w)) themeBuckets.repetition++;
+        if (friendlyWords.has(w)) themeBuckets.friendliness++;
+        if (clarityWords.has(w)) themeBuckets.clarity++;
+      });
     }
   });
 
-  draw("greetChart", {
-    type:"bar",
-    data:{ labels:Object.keys(countValues(data.map(x=>x.greet_time))),
-      datasets:[{ data:Object.values(countValues(data.map(x=>x.greet_time))), backgroundColor:"#007aff" }]
-    },
-    options:{ scales:{ y:{ beginAtZero:true }}, plugins:{ legend:{display:false} } }
-  });
+  // word cloud – keep it meaningful by using top words only
+  const topWords = topNFromMap(freq, 80)
+    .filter(([w,c]) => c >= 2 || data.length < 15) // show more early
+    .map(([w,c]) => [w, c]);
 
-  aiInsights.innerText = data.length < 5
-    ? "More responses are needed for accurate insights."
-    : "Live trends emerging across customer experience.";
+  // render word cloud
+  const wc = document.getElementById("wordCloud");
+  // clear existing canvas by resetting width
+  wc.width = wc.width;
+  WordCloud(wc, { list: topWords, gridSize: 8, weightFactor: 10, backgroundColor: "transparent" });
+
+  // sentiment + theme insights
+  const conf = confidenceTag(data.length);
+  const avg = scoredCount ? (totalScore / scoredCount) : 0;
+
+  const themeSorted = Object.entries(themeBuckets).sort((a,b)=>b[1]-a[1]).slice(0,4);
+
+  const out = [];
+  out.push(buildInsightCard(
+    `Overall comment sentiment is ${avg >= 0.3 ? "positive" : avg <= -0.3 ? "negative" : "mixed/neutral"} (heuristic).`,
+    [`Avg score: ${avg.toFixed(2)}`, `Analysed comments: ${scoredCount}`],
+    conf
+  ));
+
+  if (themeSorted.some(([,v])=>v>0)){
+    out.push(buildInsightCard(
+      `Top themes mentioned in comments: ${themeSorted.map(([k])=>k).join(", ")}.`,
+      [`(counts: ${themeSorted.map(([k,v])=>`${k}=${v}`).join(", ")})`],
+      conf
+    ));
+  } else {
+    out.push(buildInsightCard(
+      `Themes will become clearer as more open-text responses arrive.`,
+      [`Tip: open-text answers unlock the strongest insights.`],
+      conf
+    ));
+  }
+
+  // top phrases: show most common words (excluding stop words)
+  const top10 = topNFromMap(freq, 10).map(([w,c])=>`${w} (${c})`).join(", ");
+  if (top10) out.push(buildInsightCard(`Most common words: ${top10}.`, [], conf));
+
+  document.getElementById("sentimentSummary").innerHTML = out.join("");
 }
 
-/* SENTIMENT */
-function renderSentiment(data) {
-  const text = data.flatMap(x=>[x.smooth,x.frustrating,x.other_dealers,x.change_one].filter(Boolean));
-  WordCloud(wordCloud,{ list:text.join(" ").split(/\s+/).map(w=>[w,Math.random()*20+10]) });
+/* ---------------------------
+   SECTION-SPECIFIC INSIGHTS
+--------------------------- */
+function renderConsultantInsights(data){
+  const n = data.length;
+  const conf = confidenceTag(n);
+  const comfort = countValues(data.map(x=>x.comfort));
+  const follow = countValues(data.map(x=>x.follow_up));
+
+  const very = comfort.very || 0;
+  const dislike = comfort.dislike || 0;
+  const followBad = (follow.rarely||0) + (follow.never||0);
+
+  const list = [];
+  list.push(buildInsightCard(
+    `${pct(very,n)}% felt very comfortable with their consultant.`,
+    [`Disliked: ${pct(dislike,n)}%`, `Follow-up gaps (rarely/never): ${pct(followBad,n)}%`],
+    conf
+  ));
+
+  // detect “salesperson resistance” locally (from comments)
+  const mentionSalesNeg = data.filter(r => {
+    const t = [r.frustrating, r.change_one, r.other_dealers].map(safe).join(" ").toLowerCase();
+    return t.includes("sales") && (t.includes("hate") || t.includes("pushy") || t.includes("pressure") || t.includes("annoy"));
+  }).length;
+  if (mentionSalesNeg > 0){
+    list.push(buildInsightCard(
+      `${pct(mentionSalesNeg,n)}% explicitly mention negative sentiment about “sales” behaviour in comments.`,
+      [`This is a directional signal, not absolute.`],
+      conf
+    ));
+  }
+
+  document.getElementById("consultantInsights").innerHTML = list.join("");
 }
 
-/* CONSULTANTS */
-function renderConsultants(data) {
-  draw("comfortChart",{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.comfort))),datasets:[{data:Object.values(countValues(data.map(x=>x.comfort)))}]}});
-  draw("followChart",{type:"pie",data:{labels:Object.keys(countValues(data.map(x=>x.follow_up))),datasets:[{data:Object.values(countValues(data.map(x=>x.follow_up)))}]}});
+function renderDeliveryInsights(data){
+  const n = data.length;
+  const conf = confidenceTag(n);
+  const t = countValues(data.map(x=>x.delivery_time));
+  const l = countValues(data.map(x=>x.delivery_length));
+
+  const over30 = (t["30_60"]||0) + (t["60_plus"]||0);
+  const tooLong = (l.long||0);
+  const noGuide = (t.none||0);
+
+  const list = [];
+  list.push(buildInsightCard(
+    `${pct(over30,n)}% experienced delivery time of 30 minutes or more.`,
+    [`Too long: ${pct(tooLong,n)}%`, `No guided delivery: ${pct(noGuide,n)}%`],
+    conf
+  ));
+
+  // qualitative signal
+  const deliveryImproveCount = data.filter(r => safe(r.delivery_improve).trim().length > 0).length;
+  if (deliveryImproveCount){
+    list.push(buildInsightCard(
+      `${pct(deliveryImproveCount,n)}% provided a written improvement suggestion about delivery.`,
+      [`This is your “fastest win” area once patterns repeat.`],
+      conf
+    ));
+  }
+
+  document.getElementById("deliveryInsights").innerHTML = list.join("");
 }
 
-/* DELIVERY */
-function renderDelivery(data) {
-  draw("deliveryTimeChart",{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.delivery_time))),datasets:[{data:Object.values(countValues(data.map(x=>x.delivery_time)))}]}});
-  draw("deliveryLengthChart",{type:"pie",data:{labels:Object.keys(countValues(data.map(x=>x.delivery_length))),datasets:[{data:Object.values(countValues(data.map(x=>x.delivery_length)))}]}});
+function renderDigitalInsights(data){
+  const n = data.length;
+  const conf = confidenceTag(n);
+
+  const qr = countValues(data.map(x=>x.qr_helpful));
+  const ideal = countValues(data.map(x=>x.ideal_purchase_time));
+  const booking = countValues(data.map(x=>x.online_booking));
+  const future = countValues(data.map(x=>x.future_digital));
+  const age = countValues(data.map(x=>x.age));
+
+  const qrOk = (qr.yes||0)+(qr.maybe||0);
+  const under60 = (ideal.under_30||0)+(ideal["30_60"]||0);
+  const bookOk = (booking.yes||0)+(booking.maybe||0);
+  const futOk = (future.yes||0)+(future.maybe||0);
+
+  // crude age segmentation: under 40 vs 40+
+  const under40 = (age.under_21||0)+(age["21_30"]||0)+(age["31_40"]||0);
+  const over40 = n - under40;
+
+  const list = [];
+  list.push(buildInsightCard(
+    `${pct(qrOk,n)}% accept a QR/App-led start (Yes+Maybe).`,
+    [`Self-booking appetite (Yes+Maybe): ${pct(bookOk,n)}%`, `More digital future (Yes+Maybe): ${pct(futOk,n)}%`],
+    conf
+  ));
+
+  if (sumCounts(ideal) > 0){
+    list.push(buildInsightCard(
+      `${pct(under60,n)}% want the in-store purchase journey done within 60 minutes.`,
+      [`Online/Amazon-style preference: ${pct((ideal.fully_online||0),n)}%`],
+      conf
+    ));
+  }
+
+  if (n >= 20 && under40 > 0 && over40 > 0){
+    list.push(buildInsightCard(
+      `Age split: Under-40 responses = ${pct(under40,n)}% of sample.`,
+      [`Use this to segment digital rollout messaging.`],
+      conf
+    ));
+  }
+
+  document.getElementById("digitalInsights").innerHTML = list.join("");
 }
 
-/* DIGITAL */
-function renderDigital(data) {
-  draw("digitalChart",{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.qr_helpful))),datasets:[{data:Object.values(countValues(data.map(x=>x.qr_helpful)))}]}});
-  draw("ageChart",{type:"bar",data:{labels:Object.keys(countValues(data.map(x=>x.age))),datasets:[{data:Object.values(countValues(data.map(x=>x.age)))}]}});
+/* ---------------------------
+   RAW TABLE
+--------------------------- */
+let rawAll = [];
+function buildRawTable(data){
+  rawAll = data.slice().sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+  document.getElementById("rawSearch").value = "";
+  renderRawTable();
 }
 
-/* INIT */
+function renderRawTable(){
+  const q = document.getElementById("rawSearch").value.toLowerCase().trim();
+  const limit = parseInt(document.getElementById("rawLimit").value, 10);
+
+  const filtered = rawAll.filter(row => {
+    if (!q) return true;
+    return JSON.stringify(row).toLowerCase().includes(q);
+  }).slice(0, limit);
+
+  const cols = filtered.length ? Object.keys(filtered[0]) : (rawAll[0] ? Object.keys(rawAll[0]) : []);
+  document.getElementById("rawMeta").innerText =
+    `${filtered.length} shown / ${rawAll.length} total`;
+
+  const thead = document.getElementById("rawThead");
+  const tbody = document.getElementById("rawTbody");
+  thead.innerHTML = `<tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr>`;
+  tbody.innerHTML = filtered.map(r => {
+    return `<tr>${cols.map(c => `<td>${safe(r[c])}</td>`).join("")}</tr>`;
+  }).join("");
+}
+
+document.getElementById("rawSearch").addEventListener("input", renderRawTable);
+document.getElementById("rawLimit").addEventListener("change", renderRawTable);
+
+async function copyRawJson(){
+  try {
+    await navigator.clipboard.writeText(JSON.stringify(rawAll, null, 2));
+    alert("Copied JSON to clipboard.");
+  } catch(e){
+    alert("Clipboard copy failed (browser permissions).");
+  }
+}
+
+function downloadCSV(){
+  if (!rawAll.length) return alert("No data yet.");
+  const cols = Object.keys(rawAll[0]);
+  const esc = (v) => `"${safe(v).replace(/"/g,'""')}"`;
+  const lines = [
+    cols.join(","),
+    ...rawAll.map(r => cols.map(c => esc(r[c])).join(","))
+  ];
+  const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "customer_survey_responses.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ---------------------------
+   DATA LOAD
+--------------------------- */
+async function loadSurvey() {
+  const { data, error } = await supabase
+    .from("customer_survey_responses")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Supabase error:", error);
+    return;
+  }
+
+  // KPIs
+  renderKPIs(data);
+
+  // Charts
+  renderOverviewCharts(data);
+  renderConsultantCharts(data);
+  renderDeliveryCharts(data);
+  renderDigitalCharts(data);
+
+  // AI Insights stack
+  const insights = buildHeadlineInsights(data);
+  document.getElementById("aiInsights").innerHTML = insights.join("");
+
+  // Sentiment & themes
+  renderSentiment(data);
+
+  // Section insights
+  renderConsultantInsights(data);
+  renderDeliveryInsights(data);
+  renderDigitalInsights(data);
+
+  // Raw table
+  buildRawTable(data);
+}
+
+/* ---------------------------
+   INITIAL LOAD + REALTIME
+--------------------------- */
 loadSurvey();
 
-/* REALTIME */
-supabase.channel("survey_updates")
-  .on("postgres_changes",{event:"*",schema:"public",table:"customer_survey_responses"},loadSurvey)
+supabase
+  .channel("survey_updates")
+  .on("postgres_changes", { event: "*", schema: "public", table: "customer_survey_responses" },
+    () => loadSurvey()
+  )
   .subscribe();
 </script>
 
