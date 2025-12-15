@@ -326,6 +326,12 @@ input[type="search"], select {
     <canvas id="followChart"></canvas>
   </div>
 
+<div class="card">
+  <h3>Sales Consultant Influence</h3>
+  <canvas id="influenceChart"></canvas>
+  <p class="small" id="influenceInsight">Awaiting sufficient data…</p>
+</div>
+
   <div class="card">
     <h3>Consultant Signals</h3>
     <div id="consultantInsights" class="insight-stack"></div>
@@ -608,7 +614,9 @@ function renderOverviewCharts(data) {
 function renderConsultantCharts(data){
   const comfort = countValues(data.map(x=>x.comfort));
   const follow = countValues(data.map(x=>x.follow_up));
+  const influence = countValues(data.map(x=>x.consultant_influence));
 
+  // Comfort chart
   destroyChart("comfortChart");
   chartRefs.comfortChart = new Chart(document.getElementById("comfortChart"),{
     type:"bar",
@@ -619,6 +627,7 @@ function renderConsultantCharts(data){
     options:{ plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, ticks:{precision:0}}} }
   });
 
+  // Follow-up chart
   destroyChart("followChart");
   chartRefs.followChart = new Chart(document.getElementById("followChart"),{
     type:"pie",
@@ -628,57 +637,58 @@ function renderConsultantCharts(data){
     },
     options:{ plugins:{legend:{position:"bottom"}} }
   });
-}
 
-function renderDeliveryCharts(data){
-  const t = countValues(data.map(x=>x.delivery_time));
-  const l = countValues(data.map(x=>x.delivery_length));
-
-  destroyChart("deliveryTimeChart");
-  chartRefs.deliveryTimeChart = new Chart(document.getElementById("deliveryTimeChart"),{
+  // Consultant influence chart (NEW)
+  destroyChart("influenceChart");
+  chartRefs.influenceChart = new Chart(document.getElementById("influenceChart"),{
     type:"bar",
     data:{
-      labels:Object.keys(t).map(k=>labelMap("delivery_time", k)),
-      datasets:[{ data:Object.keys(t).map(k=>t[k]) }]
+      labels:[
+        "No influence",
+        "Small influence",
+        "Moderate influence",
+        "Significant influence",
+        "Critical influence"
+      ],
+      datasets:[{
+        data:[
+          influence.none || 0,
+          influence.small || 0,
+          influence.moderate || 0,
+          influence.significant || 0,
+          influence.critical || 0
+        ]
+      }]
     },
-    options:{ plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, ticks:{precision:0}}} }
+    options:{
+      plugins:{legend:{display:false}},
+      scales:{y:{beginAtZero:true, ticks:{precision:0}}}
+    }
   });
 
-  destroyChart("deliveryLengthChart");
-  chartRefs.deliveryLengthChart = new Chart(document.getElementById("deliveryLengthChart"),{
-    type:"pie",
-    data:{
-      labels:Object.keys(l).map(k=>labelMap("delivery_length", k)),
-      datasets:[{ data:Object.keys(l).map(k=>l[k]) }]
-    },
-    options:{ plugins:{legend:{position:"bottom"}} }
-  });
+  // Insight sentence
+  const n = Object.values(influence).reduce((a,b)=>a+b,0);
+  let insight = "Awaiting sufficient data…";
+
+  if (n >= 5){
+    const low = (influence.none||0) + (influence.small||0);
+    const mid = (influence.moderate||0) + (influence.significant||0);
+    const high = (influence.critical||0);
+
+    if (pct(low,n) >= 50){
+      insight = `${pct(low,n)}% say the consultant had little influence — strong evidence of a self-directed buyer journey.`;
+    } else if (pct(mid,n) >= 50){
+      insight = `${pct(mid,n)}% relied on consultants to validate or clarify decisions — supporting a consultative (not sales-led) role.`;
+    } else if (pct(high,n) >= 25){
+      insight = `${pct(high,n)}% would not have purchased without the consultant — human trust remains critical.`;
+    } else {
+      insight = "Consultant influence is mixed, supporting a flexible hybrid sales model.";
+    }
+  }
+
+  document.getElementById("influenceInsight").innerText = insight;
 }
 
-function renderDigitalCharts(data){
-  const qr = countValues(data.map(x=>x.qr_helpful));
-  const age = countValues(data.map(x=>x.age));
-
-  destroyChart("digitalChart");
-  chartRefs.digitalChart = new Chart(document.getElementById("digitalChart"),{
-    type:"bar",
-    data:{
-      labels:Object.keys(qr).map(k=>labelMap("qr_helpful", k)),
-      datasets:[{ data:Object.keys(qr).map(k=>qr[k]) }]
-    },
-    options:{ plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, ticks:{precision:0}}} }
-  });
-
-  destroyChart("ageChart");
-  chartRefs.ageChart = new Chart(document.getElementById("ageChart"),{
-    type:"bar",
-    data:{
-      labels:Object.keys(age).map(k=>labelMap("age", k)),
-      datasets:[{ data:Object.keys(age).map(k=>age[k]) }]
-    },
-    options:{ plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, ticks:{precision:0}}} }
-  });
-}
 
 /* ---------------------------
    LOCAL AI: HEADLINE ENGINE
