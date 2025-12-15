@@ -498,7 +498,6 @@ function greetToMinutesBucket(g){
   const map = { "1_min":1, "1_5":3, "5_10":8, "10_plus":12, "never":15 };
   return map[g] || null;
 }
-
 /* ---------------------------
    LOCAL “AI” TEXT ANALYSIS
 --------------------------- */
@@ -638,7 +637,7 @@ function renderConsultantCharts(data){
     options:{ plugins:{legend:{position:"bottom"}} }
   });
 
-  // Consultant influence chart (NEW)
+  // Consultant influence chart
   destroyChart("influenceChart");
   chartRefs.influenceChart = new Chart(document.getElementById("influenceChart"),{
     type:"bar",
@@ -666,7 +665,7 @@ function renderConsultantCharts(data){
     }
   });
 
-  // Insight sentence
+  // Insight sentence (REFINED but same intent)
   const n = Object.values(influence).reduce((a,b)=>a+b,0);
   let insight = "Awaiting sufficient data…";
 
@@ -676,11 +675,11 @@ function renderConsultantCharts(data){
     const high = (influence.critical||0);
 
     if (pct(low,n) >= 50){
-      insight = `${pct(low,n)}% say the consultant had little influence — strong evidence of a self-directed buyer journey.`;
+      insight = `${pct(low,n)}% report low consultant influence — buyers arrive pre-decided and value speed/clarity over persuasion.`;
     } else if (pct(mid,n) >= 50){
-      insight = `${pct(mid,n)}% relied on consultants to validate or clarify decisions — supporting a consultative (not sales-led) role.`;
+      insight = `${pct(mid,n)}% rely on consultants for reassurance and validation — consultative product mastery matters most.`;
     } else if (pct(high,n) >= 25){
-      insight = `${pct(high,n)}% would not have purchased without the consultant — human trust remains critical.`;
+      insight = `${pct(high,n)}% say the consultant was critical to purchase — human trust remains a decisive conversion lever.`;
     } else {
       insight = "Consultant influence is mixed, supporting a flexible hybrid sales model.";
     }
@@ -689,7 +688,76 @@ function renderConsultantCharts(data){
   document.getElementById("influenceInsight").innerText = insight;
 }
 
+/* ===========================================================
+   ✅ FIX: MISSING FUNCTIONS (these were called but not defined)
+   We add them WITHOUT changing your layout.
+=========================================================== */
+function renderDeliveryCharts(data){
+  const deliveryTime = countValues(data.map(x=>x.delivery_time));
+  const deliveryLen = countValues(data.map(x=>x.delivery_length));
 
+  // Delivery time chart
+  destroyChart("deliveryTimeChart");
+  const tKeys = Object.keys(deliveryTime);
+  chartRefs.deliveryTimeChart = new Chart(document.getElementById("deliveryTimeChart"),{
+    type:"bar",
+    data:{
+      labels: tKeys.map(k => labelMap("delivery_time", k)),
+      datasets:[{ data: tKeys.map(k => deliveryTime[k]) }]
+    },
+    options:{
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } }
+    }
+  });
+
+  // Delivery length chart
+  destroyChart("deliveryLengthChart");
+  const lKeys = Object.keys(deliveryLen);
+  chartRefs.deliveryLengthChart = new Chart(document.getElementById("deliveryLengthChart"),{
+    type:"pie",
+    data:{
+      labels: lKeys.map(k => labelMap("delivery_length", k)),
+      datasets:[{ data: lKeys.map(k => deliveryLen[k]) }]
+    },
+    options:{ plugins:{ legend:{ position:"bottom" } } }
+  });
+}
+
+function renderDigitalCharts(data){
+  const future = countValues(data.map(x=>x.future_digital));
+  const age = countValues(data.map(x=>x.age));
+
+  // Digital touchpoint preference (future digital)
+  destroyChart("digitalChart");
+  const fKeys = Object.keys(future);
+  chartRefs.digitalChart = new Chart(document.getElementById("digitalChart"),{
+    type:"bar",
+    data:{
+      labels: fKeys.map(k => labelMap("future_digital", k)),
+      datasets:[{ data: fKeys.map(k => future[k]) }]
+    },
+    options:{
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } }
+    }
+  });
+
+  // Age breakdown
+  destroyChart("ageChart");
+  const aKeys = Object.keys(age);
+  chartRefs.ageChart = new Chart(document.getElementById("ageChart"),{
+    type:"bar",
+    data:{
+      labels: aKeys.map(k => labelMap("age", k)),
+      datasets:[{ data: aKeys.map(k => age[k]) }]
+    },
+    options:{
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } }
+    }
+  });
+}
 /* ---------------------------
    LOCAL AI: HEADLINE ENGINE
 --------------------------- */
@@ -961,7 +1029,6 @@ function renderSentiment(data){
 
   document.getElementById("sentimentSummary").innerHTML = out.join("");
 }
-
 /* ---------------------------
    SECTION-SPECIFIC INSIGHTS
 --------------------------- */
@@ -1132,7 +1199,6 @@ function downloadCSV(){
   a.click();
   URL.revokeObjectURL(url);
 }
-
 /* ---------------------------
    DATA LOAD
 --------------------------- */
@@ -1153,8 +1219,8 @@ async function loadSurvey() {
   // Charts
   renderOverviewCharts(data);
   renderConsultantCharts(data);
-  renderDeliveryCharts(data);
-  renderDigitalCharts(data);
+  renderDeliveryCharts(data);   // ✅ now defined
+  renderDigitalCharts(data);    // ✅ now defined
 
   // AI Insights stack
   const insights = buildHeadlineInsights(data);
