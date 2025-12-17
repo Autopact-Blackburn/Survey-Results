@@ -424,17 +424,25 @@ function switchPage(n) {
 /* ---------------------------
    SUPABASE
 --------------------------- */
-const SUPABASE_URL = "https://jfvqdpephdqzalkcnmdy.supabase.co";
-const SUPABASE_KEY = "sb_publishable_l1p7oa8Lrp8rMPD2xcTyHw_vL_bwk8X";
+var supabase;
 
-if (!window.__supabaseClient) {
-  window.__supabaseClient = window.supabase.createClient(
+(function initSupabase() {
+  if (window.__supabaseClient) {
+    supabase = window.__supabaseClient;
+    return;
+  }
+
+  const SUPABASE_URL = "https://jfvqdpephdqzalkcnmdy.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_l1p7oa8Lrp8rMPD2xcTyHw_vL_bwk8X";
+
+  supabase = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
   );
-}
 
-const supabase = window.__supabaseClient;
+  window.__supabaseClient = supabase;
+})();
+
 
 /* ---------------------------
    CHART INSTANCES (avoid stacking)
@@ -1261,4 +1269,5 @@ supabase
 
 </body>
 </html>
+
 
